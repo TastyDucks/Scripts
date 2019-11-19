@@ -26,13 +26,13 @@
 Directory="/home/"
 
 # Backup log file location.
-LogLocation=""
+LogLocation="/home/backup.log"
 
 # File containing directories and files to exclude from backup. Leave blank if you don't care about this. IMPORTANT: Directories in here will always be relative to the source (that is, "$Directory"). You should NEVER include a trailing slash before entries.
-ExcludeFile=""
+ExcludeFile="/home/rsync-exclude-list.txt"
 
 # Local HDD directory.
-LocalAddress=""
+LocalAddress="/run/media/HDD/"
 
 
 
@@ -41,16 +41,16 @@ LocalAddress=""
 
 
 # Remote server username.
-RemoteUsername=""
+RemoteUsername="User"
 
 # Remote server password. Be sure that this computer and your backup locations are secure!
-RemotePassword=""
+RemotePassword="FooBar"
 
 # Remote server address.
 RemoteAddress="example.com"
 
 # Remote directory.
-RemoteDirectory="/home/"
+RemoteDirectory="/backup/"
 
 # Specify a SSH port other than the default if needed. Otherwise set this to 22!
 ServerPort="22"
@@ -126,8 +126,10 @@ then
 	fi	
 fi
 
-grep -v 'ir-chk' $LogLocation > TemporaryFile && mv TemporaryFile $LogLocation
+printf "[$(date --rfc-3339=s)] [INFO] Cleaning up log.\n" # This line is intentionally not logged. :)
 
-printf "[$(date --rfc-3339=s)] [INFO] Finished.\n" |& tee -a $LogLocation
+grep -v "/s" $LogLocation > /tmp/TemporaryFile && mv /tmp/TemporaryFile $LogLocation
+
+printf "[$(date --rfc-3339=s)] [INFO] Finished.\n\n" |& tee -a $LogLocation
 
 notify-send -u "low" -c "transfer" "Backup script" "Done!"
